@@ -19,20 +19,17 @@ def render_page(template):
         file.write(rendered_page)
 
 
-def main():
+def rebuild():
     env = Environment(
         loader=FileSystemLoader('.'),
-        autoescape=select_autoescape(['html', 'xml'])
+        autoescape=select_autoescape(['html', 'xml']),
     )
-
     template = env.get_template('template.html')
     render_page(template)
-    # server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
-    # server.serve_forever()
-    server = Server()
-    server.watch('/*.html', shell('make html', cwd='docs'))
-    server.serve(root='.')
 
 
 if __name__ == '__main__':
-    main()
+    rebuild()
+    server = Server()
+    server.watch('*.html', rebuild)
+    server.serve(root='.')
