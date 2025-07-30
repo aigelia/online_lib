@@ -42,6 +42,11 @@ def render_pages(books, path):
         with open(filename, 'w', encoding="utf8") as file:
             file.write(rendered_page)
 
+        if index == 0:
+            index_path = os.path.join(path, 'index.html')
+            with open(index_path, 'w', encoding="utf8") as file:
+                file.write(rendered_page)
+
 
 def rebuild():
     path = 'pages'
@@ -59,5 +64,5 @@ if __name__ == '__main__':
     server.watch('template.html', rebuild)
     server.watch('pages', rebuild)
     server.watch('render_website.py', rebuild)
-    server.serve(root='.')
+    server.serve(root='./pages')
 
