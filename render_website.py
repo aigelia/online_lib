@@ -14,6 +14,7 @@ def prepare_books_data(json_file_name):
         books = json.load(file)
     for book in books:
         book['txt_url'] = urllib.parse.quote(book['book_path'], safe='/')
+        book['genres'] = book['genres'].replace('.', '').split(', ')
     return books
 
 
