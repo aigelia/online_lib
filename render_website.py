@@ -1,4 +1,5 @@
 import json
+import math
 import os
 import urllib.parse
 
@@ -13,10 +14,10 @@ def prepare_books_data(json_file_name):
         books = json.load(file)
     for book in books:
         book['txt_url'] = urllib.parse.quote(book['book_path'], safe='/')
-    return list(chunked(books, 2))
+    return books
 
 
-def render_pages(books_chunked, path):
+def render_pages(books, path):
     """Рендерит страницы на основе подготовленных данных."""
     env = Environment(
         loader=FileSystemLoader('.'),
@@ -24,13 +25,20 @@ def render_pages(books_chunked, path):
     )
     template = env.get_template('template.html')
 
-    pages = chunked(books_chunked, 5)
+    books_per_page = 10
+    count_pages = math.ceil(len(books) / books_per_page)
 
-    for index, content in enumerate(pages):
+    pages = list(chunked(books, books_per_page))
+
+    for index, page_books in enumerate(pages):
+        content = list(chunked(page_books, 2))
         rendered_page = template.render(
             content=content,
+            page_number=index + 1,
+            count_pages=count_pages,
         )
-        with open(f'{path}/index{index+1}.html', 'w', encoding="utf8") as file:
+        filename = os.path.join(path, f'index{index + 1}.html')
+        with open(filename, 'w', encoding="utf8") as file:
             file.write(rendered_page)
 
 
