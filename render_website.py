@@ -1,14 +1,19 @@
 import json
+import urllib.parse
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from livereload import Server, shell
+from livereload import Server
 from more_itertools import chunked
 
 
 def render_page(template):
-    with open("meta_data.json", "r") as file:
-        books_json = file.read()
-    books = json.loads(books_json)
+    with open("meta_data.json", "r", encoding="utf-8") as file:
+        books = json.load(file)
+
+    for book in books:
+        # Кодируем путь к файлу в URL, но оставляем слэш нетронутым
+        book['txt_url'] = urllib.parse.quote(book['book_path'], safe='/')
+
     books_chunked = chunked(books, 2)
 
     rendered_page = template.render(
@@ -17,6 +22,7 @@ def render_page(template):
 
     with open('index.html', 'w', encoding="utf8") as file:
         file.write(rendered_page)
+    print("index.html updated")
 
 
 def rebuild():
