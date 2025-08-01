@@ -4,6 +4,7 @@ import os
 import urllib.parse
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+from livereload import Server
 from more_itertools import chunked
 
 
@@ -33,7 +34,6 @@ def render_pages(books, pages_dir):
     for index, page_books in enumerate(pages):
         content = list(chunked(page_books, 2))
 
-        # Абсолютный путь для статики — всегда с корня
         static_path = '/'
 
         rendered_page = template.render(
@@ -61,3 +61,7 @@ def rebuild():
 
 if __name__ == '__main__':
     rebuild()
+    server = Server()
+    server.watch('template.html', rebuild)
+    server.watch('meta_data.json', rebuild)
+    server.serve(root='.')
