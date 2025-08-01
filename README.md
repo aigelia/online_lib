@@ -35,7 +35,7 @@ python render_website.py
 ]
 ```
 
-Пример сайта можно посмотреть на GitHub Pages по этой [ссылке](example.com).
+Пример сайта можно посмотреть на GitHub Pages по этой [ссылке](https://aigelia.github.io/online_lib/).
 
 ## Цели проекта ##
 
