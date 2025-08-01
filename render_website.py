@@ -4,12 +4,10 @@ import os
 import urllib.parse
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from livereload import Server
 from more_itertools import chunked
 
 
 def prepare_books_data(json_file_name):
-    """Получает .json с мета-данными о книгах, возвращает список словарей для рендера."""
     with open(json_file_name, "r", encoding="utf-8") as file:
         books = json.load(file)
     for book in books:
@@ -18,8 +16,7 @@ def prepare_books_data(json_file_name):
     return books
 
 
-def render_pages(books, path):
-    """Рендерит страницы на основе подготовленных данных."""
+def render_pages(books, pages_dir):
     env = Environment(
         loader=FileSystemLoader('.'),
         autoescape=select_autoescape(['html', 'xml']),
@@ -31,38 +28,36 @@ def render_pages(books, path):
 
     pages = list(chunked(books, books_per_page))
 
+    os.makedirs(pages_dir, exist_ok=True)
+
     for index, page_books in enumerate(pages):
         content = list(chunked(page_books, 2))
+
+        # Абсолютный путь для статики — всегда с корня
+        static_path = '/'
+
         rendered_page = template.render(
             content=content,
             page_number=index + 1,
             count_pages=count_pages,
+            static_path=static_path,
         )
-        filename = os.path.join(path, f'index{index + 1}.html')
-        with open(filename, 'w', encoding="utf8") as file:
-            file.write(rendered_page)
 
         if index == 0:
-            index_path = os.path.join(path, 'index.html')
-            with open(index_path, 'w', encoding="utf8") as file:
-                file.write(rendered_page)
+            filename = 'index.html'  # Главная страница в корне
+        else:
+            filename = os.path.join(pages_dir, f'index{index + 1}.html')
+
+        with open(filename, 'w', encoding='utf-8') as file:
+            file.write(rendered_page)
 
 
 def rebuild():
-    path = 'pages'
-    os.makedirs(path, exist_ok=True)
-
+    pages_dir = 'pages'
     json_file_name = 'meta_data.json'
-    books_chunked = prepare_books_data(json_file_name)
-
-    render_pages(books_chunked, path)
+    books = prepare_books_data(json_file_name)
+    render_pages(books, pages_dir)
 
 
 if __name__ == '__main__':
     rebuild()
-    server = Server()
-    server.watch('template.html', rebuild)
-    server.watch('pages', rebuild)
-    server.watch('render_website.py', rebuild)
-    server.serve(root='./pages')
-
