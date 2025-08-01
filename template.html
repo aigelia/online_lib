@@ -4,7 +4,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-    <link rel="stylesheet" href="{{ static_path }}bootstrap.min.css" />
+    {% if not debug %}
+      <base href="{{ base_path }}">
+    {% endif %}
+
+    <link rel="stylesheet" href="{{ base_path }}bootstrap.min.css" />
     <title>Онлайн-библиотека</title>
   </head>
   <body>
@@ -15,7 +19,7 @@
           <li class="page-item {% if page_number == 1 %}disabled{% endif %}">
             <a
               class="page-link"
-              href="{% if page_number - 1 == 1 %}/index.html{% else %}/pages/index{{ page_number - 1 }}.html{% endif %}"
+              href="{{ base_path }}{% if page_number - 1 == 1 %}index.html{% else %}pages/index{{ page_number - 1 }}.html{% endif %}"
               tabindex="-1"
               >Назад</a
             >
@@ -25,7 +29,7 @@
             <li class="page-item {% if num == page_number %}active{% endif %}">
               <a
                 class="page-link"
-                href="{% if num == 1 %}/index.html{% else %}/pages/index{{ num }}.html{% endif %}"
+                href="{{ base_path }}{% if num == 1 %}index.html{% else %}pages/index{{ num }}.html{% endif %}"
                 >{{ num }}</a
               >
             </li>
@@ -34,7 +38,7 @@
           <li class="page-item {% if page_number == count_pages %}disabled{% endif %}">
             <a
               class="page-link"
-              href="{% if page_number + 1 == 1 %}/index.html{% else %}/pages/index{{ page_number + 1 }}.html{% endif %}"
+              href="{{ base_path }}{% if page_number + 1 == 1 %}index.html{% else %}pages/index{{ page_number + 1 }}.html{% endif %}"
               >Вперед</a
             >
           </li>
@@ -51,7 +55,7 @@
                 <div class="row no-gutters">
                   <div class="col-md-4">
                     <img
-                      src="{{ static_path }}{{ book.img_src }}"
+                      src="{{ base_path }}{{ book.img_src }}"
                       class="card-img"
                       alt="Обложка книги {{ book.title }}"
                     />
@@ -68,7 +72,7 @@
                       <p class="card-text mt-0">
                         <small>
                           <a
-                            href="{{ static_path }}{{ book.txt_url }}"
+                            href="{{ base_path }}{{ book.txt_url }}"
                             target="_blank"
                             class="text-muted"
                             >Читать</a
@@ -85,7 +89,7 @@
       {% endfor %}
     </div>
 
-    <script src="{{ static_path }}jquery-3.5.1.slim.min.js"></script>
-    <script src="{{ static_path }}bootstrap.bundle.min.js"></script>
+    <script src="{{ base_path }}jquery-3.5.1.slim.min.js"></script>
+    <script src="{{ base_path }}bootstrap.bundle.min.js"></script>
   </body>
 </html>

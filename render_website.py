@@ -3,9 +3,12 @@ import math
 import os
 import urllib.parse
 
+from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from livereload import Server
 from more_itertools import chunked
+
+load_dotenv()
 
 
 def prepare_books_data(json_file_name):
@@ -31,25 +34,28 @@ def render_pages(books, pages_dir):
 
     os.makedirs(pages_dir, exist_ok=True)
 
+    debug = os.getenv("DEBUG", "False").lower() == "true"
+    base_path = '/' if debug else '/online_lib/'
+
     for index, page_books in enumerate(pages):
         content = list(chunked(page_books, 2))
-
-        static_path = '/'
 
         rendered_page = template.render(
             content=content,
             page_number=index + 1,
             count_pages=count_pages,
-            static_path=static_path,
+            base_path=base_path,
+            debug=debug,
         )
 
         if index == 0:
-            filename = 'index.html'  # Главная страница в корне
+            filename = 'index.html'
         else:
             filename = os.path.join(pages_dir, f'index{index + 1}.html')
 
         with open(filename, 'w', encoding='utf-8') as file:
             file.write(rendered_page)
+
 
 
 def rebuild():
