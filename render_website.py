@@ -8,6 +8,8 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 from livereload import Server
 from more_itertools import chunked
 
+BOOKS_PER_ROW = 2
+
 
 def prepare_books_data(json_file_name):
     with open(json_file_name, "r", encoding="utf-8") as file:
@@ -36,7 +38,7 @@ def render_pages(books, pages_dir):
     base_path = '/' if debug else '/online_lib/'
 
     for index, page_books in enumerate(pages):
-        content = list(chunked(page_books, 2))
+        content = list(chunked(page_books, BOOKS_PER_ROW))
 
         rendered_page = template.render(
             content=content,
