@@ -9,6 +9,7 @@ from livereload import Server
 from more_itertools import chunked
 
 BOOKS_PER_ROW = 2
+BOOKS_PER_PAGE = 10
 
 
 def prepare_books_data(json_file_name):
@@ -27,10 +28,9 @@ def render_pages(books, pages_dir):
     )
     template = env.get_template('template.html')
 
-    books_per_page = 10
-    count_pages = math.ceil(len(books) / books_per_page)
+    count_pages = math.ceil(len(books) / BOOKS_PER_PAGE)
 
-    pages = list(chunked(books, books_per_page))
+    pages = list(chunked(books, BOOKS_PER_PAGE))
 
     os.makedirs(pages_dir, exist_ok=True)
 
@@ -48,10 +48,7 @@ def render_pages(books, pages_dir):
             debug=debug,
         )
 
-        if index == 0:
-            filename = 'index.html'
-        else:
-            filename = os.path.join(pages_dir, f'index{index + 1}.html')
+        filename = os.path.join(pages_dir, f'index{index + 1}.html')
 
         with open(filename, 'w', encoding='utf-8') as file:
             file.write(rendered_page)
@@ -69,8 +66,8 @@ def main():
     rebuild()
     server = Server()
     server.watch('template.html', rebuild)
-    server.watch('meta_data.json', rebuild)
-    server.serve(root='.')
+    server.watch('render_website.py', rebuild)
+    server.serve(root='.', default_filename='pages/index1.html')
 
 
 if __name__ == '__main__':
