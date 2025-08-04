@@ -35,7 +35,7 @@ def render_pages(books, pages_dir):
     os.makedirs(pages_dir, exist_ok=True)
 
     debug = os.getenv("DEBUG", "False").lower() == 'true'
-    base_path = '/' if debug else '/online_lib/'
+    base_path = '' if debug else '/online_lib/'
 
     for index, page_books in enumerate(pages):
         content = list(chunked(page_books, BOOKS_PER_ROW))
@@ -67,7 +67,7 @@ def main():
     server = Server()
     server.watch('template.html', rebuild)
     server.watch('render_website.py', rebuild)
-    server.serve(root='.', default_filename='pages/index1.html')
+    server.serve(root='.')
 
 
 if __name__ == '__main__':
