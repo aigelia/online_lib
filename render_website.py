@@ -12,7 +12,7 @@ BOOKS_PER_ROW = 2
 
 
 def prepare_books_data(json_file_name):
-    with open(json_file_name, "r", encoding="utf-8") as file:
+    with open(json_file_name, 'r', encoding='utf-8') as file:
         books = json.load(file)
     for book in books:
         book['txt_url'] = urllib.parse.quote(book['book_path'], safe='/')
@@ -34,7 +34,7 @@ def render_pages(books, pages_dir):
 
     os.makedirs(pages_dir, exist_ok=True)
 
-    debug = os.getenv("DEBUG", "False").lower() == "true"
+    debug = os.getenv("DEBUG", "False").lower() == 'true'
     base_path = '/' if debug else '/online_lib/'
 
     for index, page_books in enumerate(pages):
