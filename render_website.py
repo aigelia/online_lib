@@ -57,7 +57,6 @@ def render_pages(books, pages_dir):
             file.write(rendered_page)
 
 
-
 def rebuild():
     pages_dir = 'pages'
     json_file_name = 'meta_data.json'
@@ -65,10 +64,14 @@ def rebuild():
     render_pages(books, pages_dir)
 
 
-if __name__ == '__main__':
+def main():
     load_dotenv()
     rebuild()
     server = Server()
     server.watch('template.html', rebuild)
     server.watch('meta_data.json', rebuild)
     server.serve(root='.')
+
+
+if __name__ == '__main__':
+    main()
