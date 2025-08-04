@@ -21,6 +21,17 @@ def prepare_books_data(json_file_name):
     return books
 
 
+def get_render_mode():
+    """Определяет режим для рендера: offline, livereload, github."""
+    mode = os.getenv("MODE", "offline").lower()
+    if mode == "github":
+        return "/online_lib/"
+    elif mode == "livereload":
+        return "/"
+    else:
+        return "../"
+
+
 def render_pages(books, pages_dir):
     env = Environment(
         loader=FileSystemLoader('.'),
@@ -34,8 +45,7 @@ def render_pages(books, pages_dir):
 
     os.makedirs(pages_dir, exist_ok=True)
 
-    debug = os.getenv("DEBUG", "False").lower() == 'true'
-    base_path = '' if debug else '/online_lib/'
+    base_path = get_render_mode()
 
     for index, page_books in enumerate(pages):
         content = list(chunked(page_books, BOOKS_PER_ROW))
@@ -45,7 +55,6 @@ def render_pages(books, pages_dir):
             page_number=index + 1,
             count_pages=count_pages,
             base_path=base_path,
-            debug=debug,
         )
 
         filename = os.path.join(pages_dir, f'index{index + 1}.html')
@@ -67,7 +76,7 @@ def main():
     server = Server()
     server.watch('template.html', rebuild)
     server.watch('render_website.py', rebuild)
-    server.serve(root='.')
+    server.serve(root=".", default_filename="./pages/index1.html")
 
 
 if __name__ == '__main__':
