@@ -47,17 +47,17 @@ def render_pages(books, pages_dir):
 
     base_path = get_render_mode()
 
-    for index, page_books in enumerate(pages):
+    for page_number, page_books in enumerate(pages, start=1):
         content = list(chunked(page_books, BOOKS_PER_ROW))
 
         rendered_page = template.render(
             content=content,
-            page_number=index + 1,
+            page_number=page_number,
             count_pages=count_pages,
             base_path=base_path,
         )
 
-        filename = os.path.join(pages_dir, f'index{index + 1}.html')
+        filename = os.path.join(pages_dir, f'index{page_number}.html')
 
         with open(filename, 'w', encoding='utf-8') as file:
             file.write(rendered_page)
